@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bai1eyw | Modern Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-code"></i> Portfolio
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#home" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="#services" class="nav-link">Services</a></li>
+                <li class="nav-item"><a href="#projects" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="#testimonials" class="nav-link">Testimonials</a></li>
+                <li class="nav-item"><a href="#blog" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+                <li class="nav-item"><button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="fade-in">Hi, I'm <span class="highlight">bai1eyw</span></h1>
+                <p class="fade-in-delay">Full-Stack Developer | Creative Designer | Tech Enthusiast</p>
+                <div class="typing-text fade-in-delay-2">
+                    <span class="typing"></span>
+                </div>
+                <div class="hero-buttons">
+                    <a href="#projects" class="btn btn-primary">View My Work</a>
+                    <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+                </div>
+                <div class="social-links">
+                    <a href="#" class="social-icon" title="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-icon" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="social-icon" title="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon" title="Email"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="image-container">
+                    <img src="https://pngimg.com/uploads/porsche_logo/porsche_logo_PNG6.png" alt="Porsche Logo">
+                    <div class="image-border"></div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>Scroll Down</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="section-title">
+            <h2>About Me</h2>
+            <div class="title-underline"></div>
+        </div>
+        <div class="about-content">
+            <div class="about-text">
+                <p>I'm a dedicated full-stack developer and Discord bot specialist with 2 years of hands-on experience crafting high-quality web applications and custom Discord bots. I specialize in building responsive, feature-rich websites and intelligent Discord automation solutions that enhance user engagement and streamline community management.</p>
+                <p>My expertise spans modern web technologies and Discord.py bot development. I create beautiful, functional digital experiences combined with powerful Discord integrations that bring communities to life. From frontend design to backend architecture, I develop comprehensive solutions that solve real-world problems and deliver exceptional results.</p>
+                <div class="skills-grid">
+                    <div class="skill-item">
+                        <i class="fas fa-code"></i>
+                        <h3>Web Development</h3>
+                        <p>HTML, CSS, JavaScript, React, Node.js</p>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fab fa-discord"></i>
+                        <h3>Discord Bots</h3>
+                        <p>Discord.py, Command Systems, Events</p>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-database"></i>
+                        <h3>Databases</h3>
+                        <p>MongoDB, PostgreSQL, SQLite</p>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-cog"></i>
+                        <h3>Backend Development</h3>
+                        <p>REST APIs, Server Management, Automation</p>
+                    </div>
+                </div>
+            </div>
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&h=500&fit=crop" alt="About Image">
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="section-title">
+            <h2>Services</h2>
+            <div class="title-underline"></div>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <h3>Web Development</h3>
+                <p>Building responsive, modern websites with HTML, CSS, JavaScript, and React. Full-stack solutions tailored to your needs.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fab fa-discord"></i>
+                </div>
+                <h3>Discord Bot Development</h3>
+                <p>Creating custom Discord bots using Discord.py with advanced features, commands, and server automation.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <h3>Backend Development</h3>
+                <p>Developing robust APIs and server infrastructure with Node.js. Database design and optimization included.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-server"></i>
+                </div>
+                <h3>Server Configuration</h3>
+                <p>Setting up and configuring ERLC roleplay servers with custom scripts and management systems.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3>Database Solutions</h3>
+                <p>Designing and managing databases (MongoDB, PostgreSQL, SQLite) with efficient data architecture.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3>Technical Support</h3>
+                <p>Providing ongoing support, maintenance, and optimization for your web projects and Discord bots.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="section-title">
+            <h2>Featured Projects</h2>
+            <div class="title-underline"></div>
+        </div>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="https://i.postimg.cc/NfwDT7H7/assetsimagesottawa-logo-png.webp" alt="Greater Ottawa Roleplay">
+                    <div class="project-overlay">
+                        <a href="https://discord.gg/mvqnKB9Rry" class="project-link">Visit Server</a>
+                        <a href="#" class="project-link learn-more-btn" data-server="ottawa">Learn More</a>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <h3>Greater Ottawa Roleplay Server</h3>
+                    <p>A premier immersive roleplay server with realistic economy, law enforcement, and community-driven gameplay. Features dynamic events and engaging storylines for players.</p>
+                    <div class="project-tags">
+                        <span class="tag">ERLC</span>
+                        <span class="tag">Roleplay</span>
+                        <span class="tag">Community</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="https://i.postimg.cc/J4Z1YmtW/a-b928c91ce4fee69fbaa8b1a586ee2150.webp" alt="Texas State Roleplay">
+                    <div class="project-overlay">
+                        <a href="#" class="project-link">Visit Server</a>
+                        <a href="#" class="project-link learn-more-btn" data-server="texas">Learn More</a>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <h3>Texas State Roleplay</h3>
+                    <p>An expansive roleplay server set in Texas with realistic law enforcement, emergency services, and business opportunities. Delivering authentic roleplay experiences in a Lone Star State setting.</p>
+                    <div class="project-tags">
+                        <span class="tag">ERLC</span>
+                        <span class="tag">Roleplay</span>
+                        <span class="tag">Simulation</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="https://i.postimg.cc/NjdZpP6W/channels4-profile-(1).jpg" alt="Georgia State Roleplay">
+                    <div class="project-overlay">
+                        <a href="#" class="project-link">Visit Server</a>
+                        <a href="#" class="project-link learn-more-btn" data-server="georgia">Learn More</a>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <h3>Georgia State Roleplay</h3>
+                    <p>An engaging roleplay platform featuring diverse gameplay opportunities across Georgia. From criminal enterprises to legitimate businesses, players enjoy immersive storytelling and character development.</p>
+                    <div class="project-tags">
+                        <span class="tag">ERLC</span>
+                        <span class="tag">Roleplay</span>
+                        <span class="tag">Server</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials">
+        <div class="section-title">
+            <h2>What Clients Say</h2>
+            <div class="title-underline"></div>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">"bai1eyw absolutely nailed our ERLC server setup. The attention to detail and professional approach made a huge difference. Our community is thriving!"</p>
+                <div class="testimonial-author">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="Alex Martinez">
+                    <div>
+                        <h4>Alex Martinez</h4>
+                        <p>Lead Developer, Midnight City RP</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">"Fantastic developer! bai1eyw brought our ERLC server vision to life with innovative features and smooth implementation. Highly recommend their services!"</p>
+                <div class="testimonial-author">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="Jessica Lee">
+                    <div>
+                        <h4>Jessica Lee</h4>
+                        <p>Admin, Apex City Roleplay</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">"Outstanding work on our server configuration. bai1eyw solved every technical challenge with creative solutions and delivered everything ahead of schedule!"</p>
+                <div class="testimonial-author">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" alt="Marcus Johnson">
+                    <div>
+                        <h4>Marcus Johnson</h4>
+                        <p>Developer, Neon District RP</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">"Brilliant developer with a deep understanding of ERLC servers. bai1eyw's expertise and communication made the entire process seamless and stress-free."</p>
+                <div class="testimonial-author">
+                    <img src="https://images.unsplash.com/photo-1507539332640-34be94ba26ca?w=100&h=100&fit=crop" alt="David Park">
+                    <div>
+                        <h4>David Park</h4>
+                        <p>Manager, Silver Valley Roleplay</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="blog">
+        <div class="section-title">
+            <h2>Latest Articles</h2>
+            <div class="title-underline"></div>
+        </div>
+        <div class="blog-grid">
+            <article class="blog-card">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop" alt="Building Discord Bots">
+                    <div class="blog-category">Discord Development</div>
+                </div>
+                <div class="blog-content">
+                    <div class="blog-meta">
+                        <span class="blog-date"><i class="fas fa-calendar"></i> Dec 27, 2024</span>
+                        <span class="blog-author"><i class="fas fa-user"></i> bai1eyw</span>
+                    </div>
+                    <h3>Getting Started with Discord.py Bot Development</h3>
+                    <p>Learn how to create powerful Discord bots from scratch using Discord.py. This guide covers setup, commands, events, and advanced features for building feature-rich bot automation...</p>
+                    <a href="#" class="read-more blog-read-more" data-article="discord-bot">Read More <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </article>
+
+            <article class="blog-card">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop" alt="ERLC Server Management">
+                    <div class="blog-category">Server Management</div>
+                </div>
+                <div class="blog-content">
+                    <div class="blog-meta">
+                        <span class="blog-date"><i class="fas fa-calendar"></i> Dec 25, 2024</span>
+                        <span class="blog-author"><i class="fas fa-user"></i> bai1eyw</span>
+                    </div>
+                    <h3>Best Practices for ERLC Roleplay Server Setup</h3>
+                    <p>Explore essential tips and best practices for configuring and managing a successful ERLC roleplay server. Learn about community management, script optimization, and player engagement strategies...</p>
+                    <a href="#" class="read-more blog-read-more" data-article="erlc-server">Read More <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </article>
+
+            <article class="blog-card">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1460925895917-adf4198c5b73?w=600&h=400&fit=crop" alt="Web Development with React">
+                    <div class="blog-category">Web Development</div>
+                </div>
+                <div class="blog-content">
+                    <div class="blog-meta">
+                        <span class="blog-date"><i class="fas fa-calendar"></i> Dec 22, 2024</span>
+                        <span class="blog-author"><i class="fas fa-user"></i> bai1eyw</span>
+                    </div>
+                    <h3>Building Responsive Websites with Modern JavaScript</h3>
+                    <p>Discover techniques for building responsive, high-performance websites using HTML, CSS, and JavaScript. Learn about modern frameworks, optimization, and user experience best practices...</p>
+                    <a href="#" class="read-more blog-read-more" data-article="web-dev">Read More <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </article>
+        </div>
+        <div class="view-all-posts">
+            <a href="#" class="btn btn-primary">View All Articles</a>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <div class="section-title">
+            <h2>Get In Touch</h2>
+            <div class="title-underline"></div>
+        </div>
+        <div class="contact-content">
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h3>Location</h3>
+                        <p>New York, NY</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h3>Email</h3>
+                        <p><a href="mailto:bailey@example.com">bailey@example.com</a></p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h3>Phone</h3>
+                        <p><a href="tel:+1646789234">+1 (646) 789-2341</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                    <input type="text" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Your Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Subject" required>
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="Your Message" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 bai1eyw. All rights reserved.</p>
+            <div class="footer-social">
+                <a href="#" class="footer-social-link"><i class="fab fa-github"></i></a>
+                <a href="#" class="footer-social-link"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="footer-social-link"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="footer-social-link"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Blog Article Modal -->
+    <div class="modal" id="blogModal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div class="blog-modal-header">
+                <h2 id="blogModalTitle"></h2>
+                <span id="blogModalCategory" class="blog-modal-category"></span>
+            </div>
+            <div id="blogModalBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="blogModalClose">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Server Details Modal -->
+    <div class="modal" id="serverModal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <div id="modalBody"></div>
+            <div class="modal-footer">
+                <a href="#" id="modalLink" class="btn btn-primary" target="_blank">Join Discord</a>
+                <button class="btn btn-secondary" id="modalClose">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+</html>
