@@ -1,609 +1,865 @@
-// ===== Mobile Menu Toggle =====
-const hamburger = document.querySelector('.hamburger');
-const navMenu = document.querySelector('.nav-menu');
-const navLinks = document.querySelectorAll('.nav-link');
-const themeToggle = document.getElementById('themeToggle');
+/**
+ * Comprehensive JavaScript File
+ * Interactive Elements, Animations, and Features
+ * Created: 2025-12-27
+ */
 
-// Check for saved theme preference or default to light mode
-const currentTheme = localStorage.getItem('theme') || 'light';
-if (currentTheme === 'dark') {
-    document.body.classList.add('dark-mode');
-    updateThemeIcon();
-}
+// ============================================================================
+// GLOBAL CONFIGURATION
+// ============================================================================
 
-// Theme Toggle
-themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    const newTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-    localStorage.setItem('theme', newTheme);
-    updateThemeIcon();
-});
-
-function updateThemeIcon() {
-    if (document.body.classList.contains('dark-mode')) {
-        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-    } else {
-        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-    }
-}
-
-hamburger.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-    hamburger.classList.toggle('active');
-});
-
-navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
-        hamburger.classList.remove('active');
-    });
-});
-
-// ===== Back to Top Button =====
-const backToTopBtn = document.getElementById('backToTop');
-
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 300) {
-        backToTopBtn.classList.add('show');
-    } else {
-        backToTopBtn.classList.remove('show');
-    }
-});
-
-backToTopBtn.addEventListener('click', () => {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-});
-
-// ===== Typing Animation =====
-const typingElement = document.querySelector('.typing');
-const words = ['Full-Stack Developer', 'UI/UX Designer', 'Problem Solver', 'Tech Enthusiast'];
-let currentWord = 0;
-let currentChar = 0;
-let isDeleting = false;
-
-function type() {
-    const word = words[currentWord];
-    
-    if (isDeleting) {
-        typingElement.textContent = word.substring(0, currentChar - 1);
-        currentChar--;
-    } else {
-        typingElement.textContent = word.substring(0, currentChar + 1);
-        currentChar++;
-    }
-
-    if (!isDeleting && currentChar === word.length) {
-        setTimeout(() => {
-            isDeleting = true;
-            type();
-        }, 2000);
-        return;
-    }
-
-    if (isDeleting && currentChar === 0) {
-        isDeleting = false;
-        currentWord = (currentWord + 1) % words.length;
-        setTimeout(type, 500);
-        return;
-    }
-
-    setTimeout(type, isDeleting ? 100 : 150);
-}
-
-// Start typing animation
-type();
-
-// ===== Smooth Scroll for Navigation Links =====
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// ===== Scroll Animation Observer =====
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
+const CONFIG = {
+  ANIMATION_DURATION: 300,
+  DEBOUNCE_DELAY: 250,
+  SCROLL_THRESHOLD: 50,
+  API_TIMEOUT: 5000,
 };
 
-const observer = new IntersectionObserver(function(entries) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+/**
+ * Debounce function to limit function execution frequency
+ */
+const debounce = (func, delay) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  };
+};
+
+/**
+ * Throttle function to control function execution rate
+ */
+const throttle = (func, limit) => {
+  let inThrottle;
+  return (...args) => {
+    if (!inThrottle) {
+      func(...args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+    }
+  };
+};
+
+/**
+ * Generate unique ID
+ */
+const generateId = () => `id_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+/**
+ * Deep clone an object
+ */
+const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
+
+/**
+ * Safe JSON parse with error handling
+ */
+const safeParse = (jsonString, fallback = null) => {
+  try {
+    return JSON.parse(jsonString);
+  } catch (error) {
+    console.error('JSON parse error:', error);
+    return fallback;
+  }
+};
+
+/**
+ * Format date to readable string
+ */
+const formatDate = (date, format = 'YYYY-MM-DD HH:MM:SS') => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  const seconds = String(d.getSeconds()).padStart(2, '0');
+
+  return format
+    .replace('YYYY', year)
+    .replace('MM', month)
+    .replace('DD', day)
+    .replace('HH', hours)
+    .replace('MM', minutes)
+    .replace('SS', seconds);
+};
+
+/**
+ * Check if element is in viewport
+ */
+const isInViewport = (element) => {
+  const rect = element.getBoundingClientRect();
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  );
+};
+
+/**
+ * Smooth scroll to element
+ */
+const scrollToElement = (element, offset = 0) => {
+  const targetPosition = element.getBoundingClientRect().top + window.pageYOffset - offset;
+  window.scrollTo({
+    top: targetPosition,
+    behavior: 'smooth',
+  });
+};
+
+// ============================================================================
+// ANIMATION UTILITIES
+// ============================================================================
+
+/**
+ * Fade in animation
+ */
+const fadeIn = (element, duration = CONFIG.ANIMATION_DURATION) => {
+  element.style.opacity = '0';
+  element.style.transition = `opacity ${duration}ms ease-in`;
+  element.offsetHeight; // Trigger reflow
+  element.style.opacity = '1';
+};
+
+/**
+ * Fade out animation
+ */
+const fadeOut = (element, duration = CONFIG.ANIMATION_DURATION) => {
+  element.style.opacity = '1';
+  element.style.transition = `opacity ${duration}ms ease-out`;
+  element.offsetHeight; // Trigger reflow
+  element.style.opacity = '0';
+};
+
+/**
+ * Slide in animation
+ */
+const slideIn = (element, direction = 'left', duration = CONFIG.ANIMATION_DURATION) => {
+  const positions = {
+    left: { from: '-100%', to: '0' },
+    right: { from: '100%', to: '0' },
+    top: { from: '-100%', to: '0' },
+    bottom: { from: '100%', to: '0' },
+  };
+
+  const pos = positions[direction] || positions.left;
+  element.style.transform = `translate${direction === 'left' || direction === 'right' ? 'X' : 'Y'}(${pos.from})`;
+  element.style.transition = `transform ${duration}ms ease-out`;
+  element.offsetHeight; // Trigger reflow
+  element.style.transform = `translate${direction === 'left' || direction === 'right' ? 'X' : 'Y'}(${pos.to})`;
+};
+
+/**
+ * Scale animation
+ */
+const scaleElement = (element, scale = 1, duration = CONFIG.ANIMATION_DURATION) => {
+  element.style.transform = `scale(${scale})`;
+  element.style.transition = `transform ${duration}ms ease-in-out`;
+};
+
+/**
+ * Pulse animation
+ */
+const pulse = (element, duration = 1000, iterations = Infinity) => {
+  element.style.animation = `pulse ${duration}ms ease-in-out ${iterations}`;
+};
+
+// ============================================================================
+// DOM MANIPULATION
+// ============================================================================
+
+/**
+ * Class for DOM element management
+ */
+class DOMManager {
+  /**
+   * Add event listener with automatic cleanup
+   */
+  static addEventListener(element, event, handler, options = {}) {
+    if (!element) return;
+    element.addEventListener(event, handler, options);
+    return () => element.removeEventListener(event, handler, options);
+  }
+
+  /**
+   * Delegate event handling
+   */
+  static delegateEvent(parentSelector, eventType, childSelector, handler) {
+    const parent = document.querySelector(parentSelector);
+    if (!parent) return;
+
+    parent.addEventListener(eventType, (e) => {
+      const target = e.target.closest(childSelector);
+      if (target) {
+        handler.call(target, e);
+      }
     });
-}, observerOptions);
+  }
 
-// Observe all elements with animation classes
-document.querySelectorAll('.fade-in, .fade-in-delay, .fade-in-delay-2, .slide-in-left, .slide-in-right').forEach(el => {
-    observer.observe(el);
-});
+  /**
+   * Create and append element
+   */
+  static createElement(tag, attributes = {}, parent = null) {
+    const element = document.createElement(tag);
+    Object.entries(attributes).forEach(([key, value]) => {
+      if (key === 'class') {
+        element.className = value;
+      } else if (key === 'style') {
+        Object.assign(element.style, value);
+      } else if (key.startsWith('data-')) {
+        element.setAttribute(key, value);
+      } else {
+        element[key] = value;
+      }
+    });
 
-// ===== Contact Form Handling =====
-const contactForm = document.getElementById('contactForm');
+    if (parent) {
+      parent.appendChild(element);
+    }
+    return element;
+  }
 
-if (contactForm) {
-    // Using Formspree for email handling
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Get form data
-        const name = this.querySelector('input[type="text"]').value;
-        const email = this.querySelector('input[type="email"]').value;
-        const subject = this.querySelectorAll('input[type="text"]')[1].value;
-        const message = this.querySelector('textarea').value;
+  /**
+   * Remove element
+   */
+  static removeElement(element) {
+    if (element && element.parentNode) {
+      element.parentNode.removeChild(element);
+    }
+  }
 
-        // Validate form
-        if (!name || !email || !subject || !message) {
-            alert('Please fill in all fields!');
-            return;
+  /**
+   * Toggle class
+   */
+  static toggleClass(element, className) {
+    element.classList.toggle(className);
+  }
+
+  /**
+   * Add multiple classes
+   */
+  static addClasses(element, ...classes) {
+    element.classList.add(...classes);
+  }
+
+  /**
+   * Remove multiple classes
+   */
+  static removeClasses(element, ...classes) {
+    element.classList.remove(...classes);
+  }
+
+  /**
+   * Check if element has class
+   */
+  static hasClass(element, className) {
+    return element.classList.contains(className);
+  }
+}
+
+// ============================================================================
+// LOCAL STORAGE MANAGEMENT
+// ============================================================================
+
+/**
+ * Class for local storage operations
+ */
+class StorageManager {
+  /**
+   * Set item in local storage
+   */
+  static setItem(key, value) {
+    try {
+      const serialized = typeof value === 'string' ? value : JSON.stringify(value);
+      localStorage.setItem(key, serialized);
+      return true;
+    } catch (error) {
+      console.error('Storage error:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get item from local storage
+   */
+  static getItem(key, parseJSON = true) {
+    try {
+      const value = localStorage.getItem(key);
+      if (value === null) return null;
+      return parseJSON ? safeParse(value, value) : value;
+    } catch (error) {
+      console.error('Storage error:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Remove item from local storage
+   */
+  static removeItem(key) {
+    try {
+      localStorage.removeItem(key);
+      return true;
+    } catch (error) {
+      console.error('Storage error:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Clear all items from local storage
+   */
+  static clear() {
+    try {
+      localStorage.clear();
+      return true;
+    } catch (error) {
+      console.error('Storage error:', error);
+      return false;
+    }
+  }
+}
+
+// ============================================================================
+// FORM HANDLING
+// ============================================================================
+
+/**
+ * Class for form management
+ */
+class FormManager {
+  constructor(formSelector) {
+    this.form = document.querySelector(formSelector);
+    this.errors = {};
+    this.validators = {};
+  }
+
+  /**
+   * Add field validator
+   */
+  addValidator(fieldName, validatorFunction) {
+    this.validators[fieldName] = validatorFunction;
+  }
+
+  /**
+   * Validate form
+   */
+  validate() {
+    this.errors = {};
+    const formData = new FormData(this.form);
+
+    for (const [name, value] of formData.entries()) {
+      if (this.validators[name]) {
+        const error = this.validators[name](value);
+        if (error) {
+          this.errors[name] = error;
         }
+      }
+    }
 
-        // Create FormData and submit to Formspree
-        const formData = new FormData();
-        formData.append('name', name);
-        formData.append('email', email);
-        formData.append('subject', subject);
-        formData.append('message', message);
+    return Object.keys(this.errors).length === 0;
+  }
 
-        // Submit to Formspree endpoint
-        fetch('https://formspree.io/f/mbdjolkr', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json'
-            }
-        }).then(response => {
-            if (response.ok) {
-                // Show success message
-                const submitBtn = this.querySelector('.btn-primary');
-                const originalText = submitBtn.textContent;
-                submitBtn.textContent = '✓ Message Sent to bailey@example.com!';
-                submitBtn.style.background = '#10b981';
+  /**
+   * Get form data as object
+   */
+  getFormData() {
+    const formData = new FormData(this.form);
+    const data = {};
+    for (const [key, value] of formData.entries()) {
+      data[key] = value;
+    }
+    return data;
+  }
 
-                // Reset form
-                this.reset();
+  /**
+   * Reset form
+   */
+  reset() {
+    this.form.reset();
+    this.errors = {};
+  }
 
-                // Reset button after 3 seconds
-                setTimeout(() => {
-                    submitBtn.textContent = originalText;
-                    submitBtn.style.background = '';
-                }, 3000);
+  /**
+   * Display errors
+   */
+  displayErrors() {
+    // Clear previous errors
+    document.querySelectorAll('.form-error').forEach((el) => {
+      DOMManager.removeElement(el);
+    });
 
-                console.log('Form submitted successfully!', { name, email, subject, message });
-            } else {
-                alert('There was an error sending your message. Please try again.');
-            }
-        }).catch(error => {
-            console.error('Error:', error);
-            alert('There was an error sending your message. Please try again.');
+    // Add new errors
+    Object.entries(this.errors).forEach(([fieldName, errorMessage]) => {
+      const field = this.form.querySelector(`[name="${fieldName}"]`);
+      if (field) {
+        const errorElement = DOMManager.createElement('div', {
+          class: 'form-error',
+          textContent: errorMessage,
+          style: { color: 'red', fontSize: '12px', marginTop: '4px' },
         });
+        field.parentNode.appendChild(errorElement);
+      }
     });
+  }
 }
 
-// ===== Active Navigation Link =====
-window.addEventListener('scroll', () => {
-    let current = '';
-    const sections = document.querySelectorAll('section');
+// ============================================================================
+// HTTP REQUESTS
+// ============================================================================
 
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        if (pageYOffset >= sectionTop - 200) {
-            current = section.getAttribute('id');
-        }
-    });
+/**
+ * Class for HTTP requests
+ */
+class HTTPClient {
+  static async request(url, options = {}) {
+    const {
+      method = 'GET',
+      headers = {},
+      body = null,
+      timeout = CONFIG.API_TIMEOUT,
+    } = options;
 
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href').substring(1) === current) {
-            link.classList.add('active');
-        }
-    });
-});
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-// ===== Parallax Effect =====
-window.addEventListener('scroll', () => {
-    const parallaxElements = document.querySelectorAll('.hero-image img');
-    parallaxElements.forEach(element => {
-        let scrollPosition = window.pageYOffset;
-        element.style.transform = `translateY(${scrollPosition * 0.5}px)`;
-    });
-});
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          ...headers,
+        },
+        body: body ? JSON.stringify(body) : null,
+        signal: controller.signal,
+      });
 
-// ===== Project Card Hover Effect =====
-document.querySelectorAll('.project-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-10px)';
-    });
-    
-    card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0)';
-    });
-});
+      clearTimeout(timeoutId);
 
-// ===== Service Card Hover Effect =====
-document.querySelectorAll('.service-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-10px)';
-        this.style.boxShadow = '0 20px 60px rgba(0, 0, 0, 0.15)';
-    });
-    
-    card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0)';
-        this.style.boxShadow = '0 10px 40px rgba(0, 0, 0, 0.1)';
-    });
-});
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
 
-// ===== Navbar Background on Scroll =====
-window.addEventListener('scroll', () => {
-    const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 50) {
-        navbar.style.boxShadow = '0 2px 30px rgba(0, 0, 0, 0.1)';
-    } else {
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.05)';
+      return await response.json();
+    } catch (error) {
+      console.error('Request error:', error);
+      throw error;
     }
-});
+  }
 
-// ===== Counter Animation =====
-function animateCounter(element, target, duration = 2000) {
-    let current = 0;
-    const increment = target / (duration / 16);
-    
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-            element.textContent = target;
-            clearInterval(timer);
-        } else {
-            element.textContent = Math.floor(current);
-        }
-    }, 16);
+  static async get(url, options = {}) {
+    return this.request(url, { ...options, method: 'GET' });
+  }
+
+  static async post(url, body, options = {}) {
+    return this.request(url, { ...options, method: 'POST', body });
+  }
+
+  static async put(url, body, options = {}) {
+    return this.request(url, { ...options, method: 'PUT', body });
+  }
+
+  static async delete(url, options = {}) {
+    return this.request(url, { ...options, method: 'DELETE' });
+  }
 }
 
-// ===== Animate on Scroll =====
-function handleScroll() {
-    const elements = document.querySelectorAll('[data-animate]');
-    
-    elements.forEach(element => {
-        const elementTop = element.getBoundingClientRect().top;
-        const elementBottom = element.getBoundingClientRect().bottom;
-        
-        if (elementTop < window.innerHeight && elementBottom > 0) {
-            element.classList.add('animated');
-        }
-    });
-}
+// ============================================================================
+// INTERACTIVE COMPONENTS
+// ============================================================================
 
-window.addEventListener('scroll', handleScroll);
-window.addEventListener('load', handleScroll);
-
-// ===== Ripple Effect on Buttons =====
-document.querySelectorAll('.btn').forEach(button => {
-    button.addEventListener('click', function(e) {
-        const ripple = document.createElement('span');
-        const rect = this.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = e.clientX - rect.left - size / 2;
-        const y = e.clientY - rect.top - size / 2;
-        
-        ripple.style.width = ripple.style.height = size + 'px';
-        ripple.style.left = x + 'px';
-        ripple.style.top = y + 'px';
-        ripple.classList.add('ripple');
-        
-        this.appendChild(ripple);
-        
-        setTimeout(() => ripple.remove(), 600);
-    });
-});
-
-// ===== Add CSS for Ripple Effect =====
-const style = document.createElement('style');
-style.textContent = `
-    .btn {
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .ripple {
-        position: absolute;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.6);
-        transform: scale(0);
-        animation: ripple-animation 0.6s ease-out;
-        pointer-events: none;
-    }
-    
-    @keyframes ripple-animation {
-        to {
-            transform: scale(4);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(style);
-
-// ===== Page Load Animation =====
-window.addEventListener('load', () => {
-    document.body.style.opacity = '0';
-    setTimeout(() => {
-        document.body.style.transition = 'opacity 0.5s ease-in';
-        document.body.style.opacity = '1';
-    }, 100);
-});
-
-// ===== Keyboard Navigation =====
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        navMenu.classList.remove('active');
-        hamburger.classList.remove('active');
-    }
-});
-
-// ===== Preloader (Optional) =====
-window.addEventListener('load', () => {
-    const preloader = document.querySelector('.preloader');
-    if (preloader) {
-        preloader.style.display = 'none';
-    }
-});
-
-// ===== Performance Optimization - Debounce =====
-function debounce(func, delay) {
-    let timeoutId;
-    return function(...args) {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => func(...args), delay);
+/**
+ * Modal dialog component
+ */
+class Modal {
+  constructor(options = {}) {
+    this.options = {
+      title: 'Modal',
+      content: '',
+      onConfirm: () => {},
+      onCancel: () => {},
+      ...options,
     };
+
+    this.createModal();
+  }
+
+  createModal() {
+    this.modal = DOMManager.createElement('div', {
+      class: 'modal',
+      style: {
+        display: 'none',
+        position: 'fixed',
+        top: '0',
+        left: '0',
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        zIndex: '1000',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+    });
+
+    const container = DOMManager.createElement('div', {
+      class: 'modal-content',
+      style: {
+        backgroundColor: 'white',
+        padding: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        maxWidth: '500px',
+        width: '90%',
+      },
+    });
+
+    const title = DOMManager.createElement('h2', {
+      textContent: this.options.title,
+      style: { marginTop: '0' },
+    });
+
+    const content = DOMManager.createElement('div', {
+      innerHTML: this.options.content,
+      style: { marginBottom: '20px' },
+    });
+
+    const buttonContainer = DOMManager.createElement('div', {
+      style: { display: 'flex', gap: '10px', justifyContent: 'flex-end' },
+    });
+
+    const confirmBtn = DOMManager.createElement('button', {
+      textContent: 'Confirm',
+      style: {
+        padding: '8px 16px',
+        backgroundColor: '#007bff',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+      },
+    });
+
+    const cancelBtn = DOMManager.createElement('button', {
+      textContent: 'Cancel',
+      style: {
+        padding: '8px 16px',
+        backgroundColor: '#6c757d',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+      },
+    });
+
+    confirmBtn.addEventListener('click', () => {
+      this.options.onConfirm();
+      this.close();
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      this.options.onCancel();
+      this.close();
+    });
+
+    buttonContainer.appendChild(confirmBtn);
+    buttonContainer.appendChild(cancelBtn);
+
+    container.appendChild(title);
+    container.appendChild(content);
+    container.appendChild(buttonContainer);
+
+    this.modal.appendChild(container);
+    document.body.appendChild(this.modal);
+  }
+
+  open() {
+    this.modal.style.display = 'flex';
+    fadeIn(this.modal);
+  }
+
+  close() {
+    fadeOut(this.modal);
+    setTimeout(() => {
+      this.modal.style.display = 'none';
+    }, CONFIG.ANIMATION_DURATION);
+  }
+
+  destroy() {
+    DOMManager.removeElement(this.modal);
+  }
 }
 
-// Apply debounce to scroll handlers
-const debouncedScroll = debounce(() => {
-    handleScroll();
-}, 100);
+/**
+ * Notification/Toast component
+ */
+class Toast {
+  constructor(message, type = 'info', duration = 3000) {
+    this.message = message;
+    this.type = type;
+    this.duration = duration;
+    this.createToast();
+  }
 
-window.addEventListener('scroll', debouncedScroll);
+  createToast() {
+    const colors = {
+      success: '#28a745',
+      error: '#dc3545',
+      info: '#17a2b8',
+      warning: '#ffc107',
+    };
 
-// ===== Blog Filter and Search =====
-function searchBlogPosts(query) {
-    const blogCards = document.querySelectorAll('.blog-card');
-    blogCards.forEach(card => {
-        const title = card.querySelector('h3').textContent.toLowerCase();
-        const content = card.textContent.toLowerCase();
-        if (title.includes(query.toLowerCase()) || content.includes(query.toLowerCase())) {
-            card.style.display = 'flex';
-        } else {
-            card.style.display = 'none';
+    this.toast = DOMManager.createElement('div', {
+      textContent: this.message,
+      style: {
+        position: 'fixed',
+        bottom: '20px',
+        right: '20px',
+        padding: '15px 20px',
+        backgroundColor: colors[this.type] || colors.info,
+        color: this.type === 'warning' ? 'black' : 'white',
+        borderRadius: '4px',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        zIndex: '2000',
+        minWidth: '250px',
+      },
+    });
+
+    document.body.appendChild(this.toast);
+    fadeIn(this.toast);
+
+    if (this.duration > 0) {
+      setTimeout(() => this.close(), this.duration);
+    }
+  }
+
+  close() {
+    fadeOut(this.toast);
+    setTimeout(() => {
+      DOMManager.removeElement(this.toast);
+    }, CONFIG.ANIMATION_DURATION);
+  }
+}
+
+// ============================================================================
+// SCROLL ANIMATIONS & LAZY LOADING
+// ============================================================================
+
+/**
+ * Intersection Observer for lazy loading and scroll animations
+ */
+class ScrollObserver {
+  constructor(options = {}) {
+    this.options = {
+      threshold: 0.1,
+      rootMargin: '0px',
+      ...options,
+    };
+
+    this.observer = new IntersectionObserver(
+      (entries) => this.handleIntersection(entries),
+      {
+        threshold: this.options.threshold,
+        rootMargin: this.options.rootMargin,
+      }
+    );
+  }
+
+  observe(elements) {
+    if (typeof elements === 'string') {
+      elements = document.querySelectorAll(elements);
+    }
+
+    elements.forEach((element) => {
+      this.observer.observe(element);
+    });
+  }
+
+  handleIntersection(entries) {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const element = entry.target;
+
+        // Lazy load images
+        if (element.dataset.src && element.tagName === 'IMG') {
+          element.src = element.dataset.src;
+          element.removeAttribute('data-src');
         }
-    });
-}
 
-// ===== Testimonials Auto Rotate =====
-const testimonialCards = document.querySelectorAll('.testimonial-card');
-if (testimonialCards.length > 0) {
-    let currentTestimonial = 0;
-    setInterval(() => {
-        testimonialCards.forEach((card, index) => {
-            card.style.opacity = index === currentTestimonial ? '1' : '0.7';
-        });
-        currentTestimonial = (currentTestimonial + 1) % testimonialCards.length;
-    }, 5000);
-}
-
-// ===== Reveal Elements on Scroll =====
-const revealElements = document.querySelectorAll('.blog-card, .testimonial-card, .service-card, .project-card');
-
-const revealOptions = {
-    threshold: 0.15,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const revealOnScroll = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.animation = 'fadeInUp 0.6s ease-out forwards';
-            revealOnScroll.unobserve(entry.target);
+        // Trigger animation
+        if (element.dataset.animation) {
+          this.applyAnimation(element, element.dataset.animation);
         }
+
+        // Mark as loaded
+        DOMManager.addClasses(element, 'loaded');
+        this.observer.unobserve(element);
+      }
     });
-}, revealOptions);
+  }
 
-revealElements.forEach(element => revealOnScroll.observe(element));
+  applyAnimation(element, animationType) {
+    const animations = {
+      fadeIn: () => fadeIn(element),
+      slideInLeft: () => slideIn(element, 'left'),
+      slideInRight: () => slideIn(element, 'right'),
+      slideInTop: () => slideIn(element, 'top'),
+      slideInBottom: () => slideIn(element, 'bottom'),
+      scaleUp: () => scaleElement(element, 1.1),
+    };
 
-// ===== Reading Time Calculator =====
-function calculateReadingTime(text) {
-    const wordsPerMinute = 200;
-    const wordCount = text.split(/\s+/).length;
-    return Math.ceil(wordCount / wordsPerMinute);
+    if (animations[animationType]) {
+      animations[animationType]();
+    }
+  }
+
+  disconnect() {
+    this.observer.disconnect();
+  }
 }
 
-// ===== Copy Blog Title to Clipboard =====
-document.querySelectorAll('.blog-card').forEach(card => {
-    card.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        const title = card.querySelector('h3').textContent;
-        navigator.clipboard.writeText(title);
-        const message = document.createElement('div');
-        message.textContent = '✓ Copied!';
-        message.style.cssText = 'position: fixed; top: 20px; right: 20px; background: var(--primary-color); color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000;';
-        document.body.appendChild(message);
-        setTimeout(() => message.remove(), 2000);
-    });
-});
+// ============================================================================
+// EVENT HANDLERS
+// ============================================================================
 
-// ===== Smooth Section Scroll with Offset =====
-function scrollToSection(sectionId) {
-    const section = document.querySelector(sectionId);
-    const navHeight = document.querySelector('.navbar').offsetHeight;
-    if (section) {
-        const sectionTop = section.offsetTop - navHeight;
-        window.scrollTo({
-            top: sectionTop,
-            behavior: 'smooth'
+/**
+ * Initialize all interactive features
+ */
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('Application initialized');
+
+  // Initialize scroll observer for lazy loading
+  const scrollObserver = new ScrollObserver({ threshold: 0.1 });
+  scrollObserver.observe('[data-animation]');
+  scrollObserver.observe('img[data-src]');
+
+  // Handle smooth scrolling
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = link.getAttribute('href').substring(1);
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        scrollToElement(targetElement, 20);
+      }
+    });
+  });
+
+  // Add keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    // Esc to close modals
+    if (e.key === 'Escape') {
+      // Handle escape key
+    }
+
+    // Ctrl/Cmd + K for search
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      // Handle search activation
+    }
+  });
+
+  // Responsive menu toggle
+  const setupMenuToggle = () => {
+    const menuToggle = document.querySelector('[data-toggle="menu"]');
+    const menu = document.querySelector('[data-menu]');
+
+    if (menuToggle && menu) {
+      menuToggle.addEventListener('click', () => {
+        DOMManager.toggleClass(menu, 'active');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target) && !menuToggle.contains(e.target)) {
+          DOMManager.removeClasses(menu, 'active');
+        }
+      });
+    }
+  };
+
+  setupMenuToggle();
+
+  // Initialize tooltips
+  const initializeTooltips = () => {
+    document.querySelectorAll('[data-tooltip]').forEach((element) => {
+      element.addEventListener('mouseenter', (e) => {
+        const tooltipText = element.getAttribute('data-tooltip');
+        const tooltip = DOMManager.createElement('div', {
+          textContent: tooltipText,
+          class: 'tooltip',
+          style: {
+            position: 'absolute',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            color: 'white',
+            padding: '8px 12px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            zIndex: '1001',
+            pointerEvents: 'none',
+          },
         });
-    }
-}
 
-// ===== Lazy Load Images =====
-if ('IntersectionObserver' in window) {
-    const imageObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src || img.src;
-                img.classList.add('loaded');
-                imageObserver.unobserve(img);
-            }
+        document.body.appendChild(tooltip);
+
+        const rect = element.getBoundingClientRect();
+        tooltip.style.top = rect.top - tooltip.offsetHeight - 8 + 'px';
+        tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
+
+        fadeIn(tooltip);
+
+        element.addEventListener('mouseleave', () => {
+          fadeOut(tooltip);
+          setTimeout(() => {
+            DOMManager.removeElement(tooltip);
+          }, CONFIG.ANIMATION_DURATION);
         });
+      });
     });
+  };
 
-    document.querySelectorAll('img').forEach(img => imageObserver.observe(img));
-}
+  initializeTooltips();
 
-// ===== Server Details Modal =====
-const serverData = {
-    ottawa: {
-        title: 'Greater Ottawa Roleplay Server',
-        description: 'Greater Ottawa Roleplay Server is a premier immersive ERLC roleplay experience. Our server features a realistic economy system with diverse job opportunities, professional law enforcement and emergency services departments, and community-driven gameplay that emphasizes storytelling and character development. We host dynamic events regularly, offer engaging storylines for players of all levels, and maintain a supportive community focused on quality roleplay. Join thousands of players in experiencing authentic, thrilling roleplay scenarios in the Ottawa region.',
-        link: 'https://discord.gg/mvqnKB9Rry'
-    },
-    texas: {
-        title: 'Texas State Roleplay',
-        description: 'Texas State Roleplay is an expansive ERLC server set in the heart of Texas. Experience realistic law enforcement operations with our professional police and sheriff departments, fully functional emergency services, and diverse business opportunities. The server features a detailed Texas economy, authentic location landmarks, and immersive roleplay scenarios. Whether you\'re looking for criminal roleplay, legitimate business ventures, or law enforcement careers, Texas State Roleplay offers something for everyone in the Lone Star State.',
-        link: '#'
-    },
-    georgia: {
-        title: 'Georgia State Roleplay',
-        description: 'Georgia State Roleplay brings southern charm and immersive gameplay to ERLC. Explore a detailed Georgian landscape with realistic law enforcement agencies, comprehensive emergency services, and thriving business sectors. The server emphasizes community interaction and dynamic storytelling. Experience authentic gang roleplay, legitimate business ownership, law enforcement careers, and everything in between. Join our welcoming Georgia community and become part of an ever-growing roleplay experience in the heart of the South.',
-        link: '#'
+  // Update clock
+  const updateClock = () => {
+    const clockElement = document.querySelector('[data-clock]');
+    if (clockElement) {
+      clockElement.textContent = formatDate(new Date(), 'YYYY-MM-DD HH:MM:SS');
     }
-};
+  };
 
-// ===== Blog Article Data =====
-const blogData = {
-    'discord-bot': {
-        title: 'Getting Started with Discord.py Bot Development',
-        category: 'Discord Development',
-        content: 'Learn how to create powerful Discord bots from scratch using Discord.py. This comprehensive guide covers everything you need to know:\n\n<strong>Setup & Installation:</strong> Get Python and Discord.py installed and configured. Create your first bot application on Discord Developer Portal.\n\n<strong>Basic Commands:</strong> Learn how to build command systems, handle user input, and respond to messages. Understand command groups and subcommands.\n\n<strong>Event Handling:</strong> Master Discord events like on_message, on_member_join, and on_reaction_add. Build responsive bots that react to server activities.\n\n<strong>Advanced Features:</strong> Implement embeds, reactions, buttons, and select menus. Create databases to store persistent data. Build moderation tools and fun entertainment commands.\n\n<strong>Best Practices:</strong> Learn about error handling, logging, and security. Deploy your bot on hosting platforms and keep it running 24/7.\n\nWhether you\'re building a fun entertainment bot, moderation tool, or utility helper for your Discord community, this guide will get you started on the right path!'
-    },
-    'erlc-server': {
-        title: 'Best Practices for ERLC Roleplay Server Setup',
-        category: 'Server Management',
-        content: 'Explore essential tips and best practices for configuring and managing a successful ERLC roleplay server:\n\n<strong>Initial Setup:</strong> Configure server properties, set up custom rules, and establish player limits. Create clear server descriptions to attract the right players.\n\n<strong>Community Management:</strong> Recruit experienced moderators and admins. Establish clear rules of conduct and consequences for rule breaking. Foster a welcoming and inclusive community.\n\n<strong>Script Configuration:</strong> Customize game mechanics and job systems. Configure economy systems that encourage roleplay. Optimize server performance and reduce lag.\n\n<strong>Player Engagement:</strong> Host regular events and tournaments. Create compelling storylines and progression systems. Reward active roleplayers and community contributors.\n\n<strong>Technical Administration:</strong> Regular backups and maintenance routines. Monitor server logs for issues. Keep scripts and systems updated.\n\n<strong>Growth Strategies:</strong> Advertise on roleplay server lists. Build social media presence. Encourage word-of-mouth through quality gameplay.\n\nA successful server combines technical excellence with great community management. By following these practices, you\'ll create a thriving roleplay community!'
-    },
-    'web-dev': {
-        title: 'Building Responsive Websites with Modern JavaScript',
-        category: 'Web Development',
-        content: 'Discover techniques for building responsive, high-performance websites using HTML, CSS, and JavaScript:\n\n<strong>Responsive Design Fundamentals:</strong> Master mobile-first design principles. Use CSS Grid and Flexbox for flexible layouts. Implement media queries for different screen sizes.\n\n<strong>Modern JavaScript:</strong> Learn ES6+ features like arrow functions, destructuring, and async/await. Use fetch API for data loading. Implement interactive features without heavy frameworks.\n\n<strong>Performance Optimization:</strong> Minimize and compress assets. Use lazy loading for images. Implement caching strategies. Optimize critical rendering path.\n\n<strong>User Experience:</strong> Create smooth animations and transitions. Implement loading states and error handling. Design accessible interfaces that work for everyone.\n\n<strong>Development Workflow:</strong> Use version control with Git. Implement debugging tools and browser DevTools. Test across different browsers and devices.\n\n<strong>Deployment:</strong> Choose hosting providers like GitHub Pages, Vercel, or Netlify. Configure domains and SSL certificates. Monitor performance in production.\n\nBuilding with vanilla HTML, CSS, and JavaScript gives you maximum control and minimal dependencies. Master these fundamentals and you\'ll be able to build anything!'
-    }
-}
-};
-
-const modal = document.getElementById('serverModal');
-const modalTitle = document.getElementById('modalTitle');
-const modalBody = document.getElementById('modalBody');
-const modalLink = document.getElementById('modalLink');
-const learnMoreBtns = document.querySelectorAll('.learn-more-btn');
-const modalClose = document.querySelector('.modal-close');
-const modalCloseBtn = document.getElementById('modalClose');
-
-function openModal(serverId) {
-    const server = serverData[serverId];
-    if (server) {
-        modalTitle.textContent = server.title;
-        modalBody.textContent = server.description;
-        modalLink.href = server.link;
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-function closeModal() {
-    modal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-}
-
-learnMoreBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const serverId = btn.getAttribute('data-server');
-        openModal(serverId);
-    });
+  updateClock();
+  setInterval(updateClock, 1000);
 });
 
-modalClose.addEventListener('click', closeModal);
-modalCloseBtn.addEventListener('click', closeModal);
+// ============================================================================
+// EXPORT FOR MODULE USE
+// ============================================================================
 
-modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-        closeModal();
-    }
-});
-
-// Close modal on Escape key
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.classList.contains('active')) {
-        closeModal();
-    }
-});
-
-// ===== Blog Article Modal =====
-const blogModal = document.getElementById('blogModal');
-const blogModalTitle = document.getElementById('blogModalTitle');
-const blogModalCategory = document.getElementById('blogModalCategory');
-const blogModalBody = document.getElementById('blogModalBody');
-const blogReadMoreBtns = document.querySelectorAll('.blog-read-more');
-const blogModalClose = document.querySelector('#blogModalClose');
-const blogModalCloseBtn = document.querySelector('#blogModal .modal-close');
-
-function openBlogModal(articleId) {
-    const article = blogData[articleId];
-    if (article) {
-        blogModalTitle.textContent = article.title;
-        blogModalCategory.textContent = article.category;
-        blogModalBody.innerHTML = article.content;
-        blogModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    debounce,
+    throttle,
+    generateId,
+    deepClone,
+    safeParse,
+    formatDate,
+    isInViewport,
+    scrollToElement,
+    fadeIn,
+    fadeOut,
+    slideIn,
+    scaleElement,
+    pulse,
+    DOMManager,
+    StorageManager,
+    FormManager,
+    HTTPClient,
+    Modal,
+    Toast,
+    ScrollObserver,
+  };
 }
-
-function closeBlogModal() {
-    blogModal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-}
-
-blogReadMoreBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const articleId = btn.getAttribute('data-article');
-        openBlogModal(articleId);
-    });
-});
-
-blogModalCloseBtn.addEventListener('click', closeBlogModal);
-blogModalClose.addEventListener('click', closeBlogModal);
-
-blogModal.addEventListener('click', (e) => {
-    if (e.target === blogModal) {
-        closeBlogModal();
-    }
-});
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && blogModal.classList.contains('active')) {
-        closeBlogModal();
-    }
-});
-
-console.log('Portfolio loaded successfully! 🚀');
